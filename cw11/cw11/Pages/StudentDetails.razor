@@ -1,0 +1,37 @@
+﻿@page "/students/{ID:int}"
+@using cw11.Data
+@inject IStudentService Service;
+
+
+
+@if(_student is not null)
+{
+    <head>
+        <link href="StudentDetails.razor.css" rel="stylesheet" type="text/css" />
+    </head>
+
+    <h3>Student's details</h3>
+
+    <body>
+        <div>First Name: @_student.FirstName</div>
+        <div>Last Name: @_student.LastName</div>
+        <div>Birthdate: @_student.Birthdate.ToString("dd/MM/yyyy")</div>
+        <div>Studies: @_student.Studies</div>
+        <div><img src="@_student.AvatarURL" alt="" /></div>
+    </body>
+
+}
+
+<a href="/students">Return</a>
+
+@code {
+    [Parameter]
+    public int ID { get; set; }
+    private Student? _student;
+
+    protected override async Task OnInitializedAsync()
+    {
+        _student = Service.GetStudent(ID);
+    }
+
+}

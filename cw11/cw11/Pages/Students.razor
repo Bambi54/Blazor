@@ -1,0 +1,86 @@
+﻿@page "/students"
+@using cw11.Data;
+@inject IStudentService Service;
+@inject NavigationManager NM;
+@inject IJSRuntime JS;
+
+@if(_students is null)
+{
+    <div>Loading...</div>
+} else
+{
+
+    <h2>Studenci</h2>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Avatar</th>
+                <th @onclick=@(() => Sort("FirstName"))>First Name</th>
+                <th @onclick=@(() => Sort("LastName"))>Last Name</th>
+                <th @onclick=@(() => Sort("Birthdate"))>Birthdate</th>
+                <th @onclick=@(() => Sort("Studies"))>Studies</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach(var s in _students)
+            {
+                <tr>
+                    <td>
+                        <img @onclick=@(() => NM.NavigateTo($"/students/{@s.ID}")) src="@s.AvatarURL" alt=""/>
+                    </td>
+                    <td>@s.FirstName</td>
+                    <td>@s.LastName</td>
+                    <td>@s.Birthdate.ToString("dd/MM/yyyy")</td>
+                    <td>@s.Studies</td>
+                    <td>
+                        <img @onclick=@(() => RemoveStudent(s.ID)) src="https://hotemoji.com/images/dl/r/cross-mark-emoji-by-twitter.png" alt=""/>
+                    </td>
+                </tr>
+            }
+
+        </tbody>
+
+    </table>
+}
+
+@code {
+    private ICollection<Student>? _students;
+    private bool desc = false;
+    private string ordBy = string.Empty;
+
+    private async Task RemoveStudent(int id)
+    {
+        if (await JS.InvokeAsync<bool>("confirm", "Czy na pewno chcesz usunąć ten element?"))
+        {
+            var sToRemove = _students!.FirstOrDefault(e => e.ID == id);
+            if (sToRemove is not null)
+            {
+                _students!.Remove(sToRemove);
+            }
+        }
+    }
+
+    private void Sort(string colName)
+    {
+        if (colName == ordBy && desc == false)
+        {
+            _students = _students!.OrderByDescending(e => e.GetType().GetProperty(colName)?.GetValue(e)).ToList();
+            desc = true;
+        } else
+        {
+            _students = _students!.OrderBy(e => e.GetType().GetProperty(colName)?.GetValue(e)).ToList();
+            desc = false;
+        }
+
+        ordBy = colName;
+    }
+
+    protected override async Task OnInitializedAsync()
+    {
+        _students = Service.GetStudents();
+    }
+
+
+}

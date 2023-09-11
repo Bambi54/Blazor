@@ -1,0 +1,20 @@
+h2[b-hn8lsfub33]{
+    text-decoration:underline;
+}
+
+table[b-hn8lsfub33], td[b-hn8lsfub33], th[b-hn8lsfub33] {
+    border: 1px solid gray;
+}
+
+table[b-hn8lsfub33]{
+    width:90%;
+}
+
+td[b-hn8lsfub33],th[b-hn8lsfub33]{
+    padding: 5px;
+    text-align:center;
+}
+
+img[b-hn8lsfub33]{
+    width: 50px;
+}
